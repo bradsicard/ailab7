@@ -30,8 +30,14 @@ public abstract class Weapon
     }
 }
 
-public class Rifle : Weapon
+public class Sniper : Weapon
 {
+    public Sniper()
+    {
+        damage = 40.0f;
+        timeMax = 1f;
+    }
+
     public override void Shoot(Vector3 direction)
     {
         timeCurrent += Time.deltaTime;
@@ -47,6 +53,11 @@ public class Rifle : Weapon
 
 public class Shotgun : Weapon
 {
+    public Shotgun()
+    {
+        damage = 10.0f;
+        timeMax = 0.5f;
+    }
     public override void Shoot(Vector3 direction)
     {
         timeCurrent += Time.deltaTime;

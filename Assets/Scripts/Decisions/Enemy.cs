@@ -17,13 +17,14 @@ public class Enemy : MonoBehaviour
     float speed = 5.0f;
     float ahead = 2.0f;
 
-    [HideInInspector] public bool shotgun;
-    [HideInInspector] public bool sniper;
+    public bool shotgun;
+    public bool sniper;
 
     enum State
     {
         PATROL,
-        ATTACK
+        ATTACK,
+        FLEE
     }
 
     // Behaviour
@@ -42,12 +43,8 @@ public class Enemy : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
-        weapon = new Rifle();
-        weapon.weaponPrefab = bulletPrefab;
-        weapon.owner = gameObject;
-        weapon.team = Team.ENEMY;
-        weapon.damage = 10.0f;
-        weapon.timeMax = 0.5f;
+        weapon = new Sniper();
+        FillWeapon();
     }
 
     void Update()
@@ -61,6 +58,9 @@ public class Enemy : MonoBehaviour
         
             case State.ATTACK:
                 Attack();
+                break;
+            case  State.FLEE:
+                Flee();
                 break;
         }
         Avoid();
@@ -76,10 +76,23 @@ public class Enemy : MonoBehaviour
         // In the future we may want to separate distance vs line-of-sight
         bool playerDetected = Vector2.Distance(player.transform.position, transform.position) <= playerDetectRadius;
         bool playerVisible = playerRaycast && playerRaycast.collider.CompareTag("Player");
-        state = playerVisible ? State.ATTACK : State.PATROL;
+        if (shotgun || sniper)
+        {
+            state = playerVisible ? State.ATTACK : State.PATROL;
+        }
+        else
+        {
+            state = playerVisible ? State.FLEE : State.PATROL;
+        }
 
         if (health <= 0.0f)
             Debug.Log("Enemy died");
+    }
+    void FillWeapon()
+    {
+        weapon.weaponPrefab = bulletPrefab;
+        weapon.owner = gameObject;
+        weapon.team = Team.ENEMY;
     }
 
     // Seek waypoints
@@ -93,6 +106,13 @@ public class Enemy : MonoBehaviour
     void Attack()
     {
         Vector2 force = Steering.Seek(rb, player.transform.position, speed);
+        rb.AddForce(force);
+        weapon.Shoot((player.transform.position - transform.position).normalized);
+    }
+
+    void Flee()
+    {
+        Vector2 force = Steering.Flee(rb, player.transform.position, speed);
         rb.AddForce(force);
         weapon.Shoot((player.transform.position - transform.position).normalized);
     }

@@ -14,12 +14,8 @@ public class Player : MonoBehaviour
     void Start()
     {
         weapon = new Shotgun();
-        weapon.weaponPrefab = bulletPrefab;
-        weapon.owner = gameObject;
-        weapon.team = Team.PLAYER;
-        weapon.damage = 10.0f;
-
-        weapon.timeMax = 0.5f;
+        FillWeapon();
+        
     }
 
     void Update()
@@ -29,6 +25,13 @@ public class Player : MonoBehaviour
 
         if (health <= 0.0f)
             Debug.Log("Player died");
+    }
+
+    void FillWeapon()
+    {
+        weapon.weaponPrefab = bulletPrefab;
+        weapon.owner = gameObject;
+        weapon.team = Team.PLAYER;
     }
 
     void Move()

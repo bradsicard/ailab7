@@ -7,6 +7,11 @@ public static class Steering
         return (target - seeker.position).normalized * moveSpeed - seeker.linearVelocity;
     }
 
+    public static Vector2 Flee(Rigidbody2D seeker, Vector2 target, float moveSpeed/*, float turnSpeed*/)
+    {
+        return -((target - seeker.position).normalized) * moveSpeed - seeker.linearVelocity;
+    }
+
     public static Vector2 FollowLine(GameObject seeker, GameObject[] waypoints, ref int curr, ref int next, float ahead, float speed)
     {
         // Calculate seek target
