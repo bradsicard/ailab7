@@ -8,23 +8,36 @@ public class Player : MonoBehaviour
     Weapon weapon = null;
     public float health = 100.0f;
 
-    [HideInInspector] public bool shotgun;
-    [HideInInspector] public bool sniper;
+    public bool shotgun;
+    public bool sniper;
+    private float timer;
+    private bool onShotgun;
 
     void Start()
     {
-        weapon = new Shotgun();
-        FillWeapon();
-        
+        weapon = null;
+        timer = 5f;
     }
 
     void Update()
     {
         Move();
         Shoot();
+            
+        timer -= 1 * Time.deltaTime;
 
-        if (health <= 0.0f)
-            Debug.Log("Player died");
+        if(timer <= 0.0f)
+        {
+            timer = 5f;
+            if(sniper && shotgun)
+            {
+                weapon = onShotgun ? new Sniper() : new Shotgun();
+                FillWeapon();
+                onShotgun = onShotgun ? false : true;
+                Debug.Log("PLAYER HAS BOTH WEAPONS: SWAPPED TO " + weapon + " (5s)");
+            }
+        }
+        
     }
 
     void FillWeapon()
@@ -66,9 +79,22 @@ public class Player : MonoBehaviour
         Vector3 direction = (mouse - transform.position).normalized;
         Debug.DrawLine(transform.position, transform.position + direction * 5.0f, GetComponent<SpriteRenderer>().color);
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space) && weapon != null)
         {
             weapon.Shoot(direction);
+        }
+    }
+
+    public void Pickup(TYPE type)
+    {
+        switch (type)
+        {
+            case TYPE.Shotgun:
+                if (!shotgun) { shotgun = true; weapon = new Shotgun(); FillWeapon(); }
+                break;
+            case TYPE.Sniper:
+                if (!sniper) { sniper = true; weapon = new Sniper(); FillWeapon(); }
+                break;
         }
     }
 }
