@@ -1,3 +1,4 @@
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -118,9 +119,19 @@ public class Enemy : MonoBehaviour
         // Seek player
         void Attack()
         {
+            float distance = Vector2.Distance(this.transform.position, player.transform.position);
+            
             Vector2 force = Steering.Seek(rb, player.transform.position, speed);
             rb.AddForce(force);
+        if (distance >= 2f && weapon.name == "Sniper")
+        {
             weapon.Shoot((player.transform.position - transform.position).normalized);
+        }
+        else if (distance <= 2f && weapon.name == "Shotgun")
+        {
+            weapon.Shoot((player.transform.position - transform.position).normalized);
+        }
+
         }
 
         void Flee()

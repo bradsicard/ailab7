@@ -6,6 +6,7 @@ public abstract class Weapon
     public GameObject owner;
     public Team team = Team.NONE;
     public float damage = 0.0f;
+    public string name;
 
     public float timeCurrent = 0.0f;
     public float timeMax = 0.0f; // <-- how long we wait in-between shots (ie 0.1 for machine gun, 1.0 for sniper)
@@ -36,6 +37,7 @@ public class Sniper : Weapon
     {
         damage = 40.0f;
         timeMax = 1f;
+        name = "Sniper";
     }
 
     public override void Shoot(Vector3 direction)
@@ -57,6 +59,7 @@ public class Shotgun : Weapon
     {
         damage = 10.0f;
         timeMax = 0.5f;
+        name = "Shotgun";
     }
     public override void Shoot(Vector3 direction)
     {
